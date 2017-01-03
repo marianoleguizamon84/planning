@@ -104,6 +104,8 @@ $series = get_form_var('series', 'int');
 $action = get_form_var('action', 'string');
 $returl = get_form_var('returl', 'string');
 $error = get_form_var('error', 'string');
+$capacity = get_form_var('capacity', 'int');
+
 
 // If we dont know the right date then make it up
 if (!isset($day) or !isset($month) or !isset($year))
@@ -168,6 +170,8 @@ $type          = $row['type'];
 $status        = $row['status'];
 $private       = $row['private'];
 $room_id       = $row['room_id'];
+$capacity      = $row['capacity'];
+
 $updated       = time_date_string($row['last_updated']);
 $last_reminded = (empty($row['reminded'])) ? $row['last_updated'] : $row['reminded'];
 // need to make DST correct in opposite direction to entry creation
@@ -385,6 +389,10 @@ if ($provisional_enabled && ($status == STATUS_PROVISIONAL) && $puedeEditar)
     echo "<td" . (($keep_private) ? " class=\"private\"" : "") . ">" . mrbs_nl2br($description) . "</td>\n";
     ?>
   </tr>
+  <tr>
+    <td>Cantidad Alumnos:</td>
+    <td><?php echo $capacity ?></td>
+  </tr>
   <?php
   if ($provisional_enabled)
   {
@@ -494,7 +502,7 @@ if($rep_type != REP_NONE)
 
 
   <div>
-    
+
     <?php
 
     // Copy and Copy series

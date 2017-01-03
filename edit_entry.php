@@ -53,14 +53,14 @@ if (!isset($edit_type))
 
 // We might be going through edit_entry more than once, for example if we have to log on on the way.  We
 // still need to preserve the original calling page so that once we've completed edit_entry_handler we can
-// go back to the page we started at (rather than going to the default view).  If this is the first time 
-// through, then $HTTP_REFERER holds the original caller.    If this is the second time through we will have 
+// go back to the page we started at (rather than going to the default view).  If this is the first time
+// through, then $HTTP_REFERER holds the original caller.    If this is the second time through we will have
 // stored it in $returl.
 if (!isset($returl))
 {
   $returl = isset($HTTP_REFERER) ? $HTTP_REFERER : "";
 }
-    
+
 if (!getAuthorised(1))
 {
   showAccessDenied($day, $month, $year, $area, isset($room) ? $room : "");
@@ -78,7 +78,7 @@ if ( $area == '21' and $permiso < '3'){
 	print_header($day, $month, $year, $area, isset($room) ? $room : "");
 	echo '<br>';
 	echo 'No tiene permisos para reservar esta aula<br>';
-	
+
 	echo 'Por favor contactese con Alejandra López o Mariano Leguizamón para proceder a realizar reservas en los espacios exclusivos del CAI.<br>';
 	//echo '<a href="mailto:allopez@austral.edu.ar?cc=mleguizamon@austral.edu.ar&amp;subject=Reserva%20de%20Salon&amp;body=Motivo: '.$user.'%0D%0AFecha:%0D%0A">Enviar correo para reservar salon</a><br>';
 	echo "<a href='javascript:history.back()'>Volver</a>";
@@ -101,8 +101,8 @@ if ( $area == '21' and $permiso < '3'){
 if (isset($id))
 {
   $sql = "select name, create_by, description, start_time, end_time,
-     type, room_id, entry_type, repeat_id, private, ceco from $tbl_entry where id=$id";
-   
+     type, room_id, entry_type, repeat_id, private, ceco, capacity from $tbl_entry where id=$id";
+
   $res = sql_query($sql);
   if (! $res)
   {
@@ -115,7 +115,7 @@ if (isset($id))
 
   $row = sql_row_keyed($res, 0);
   sql_free($res);
-  
+
 
   // We've possibly got a new room and area, so we need to update the settings
   // for this area.
@@ -141,19 +141,20 @@ if (isset($id))
   $rep_id      = $row['repeat_id'];
   $private     = $row['private'];
   $ceco_row    = $row['ceco'];
+  $capacity    = $row['capacity'];
 
-  if ($private_mandatory) 
+  if ($private_mandatory)
   {
     $private = $private_default;
   }
   // Need to clear some data if entry is private and user
   // does not have permission to edit/view details
-  if (isset($copy) && ($create_by != $row['create_by'])) 
+  if (isset($copy) && ($create_by != $row['create_by']))
   {
     // Entry being copied by different user
     // If they don't have rights to view details, clear them
     $privatewriteable = getWritable($row['create_by'], $user, $room_id);
-    if (is_private_event($private) && !$privatewriteable) 
+    if (is_private_event($private) && !$privatewriteable)
     {
         $name = '';
         $description = '' ;
@@ -164,7 +165,7 @@ if (isset($id))
   {
     $sql = "SELECT rep_type, start_time, end_date, rep_opt, rep_num_weeks
             FROM $tbl_repeat WHERE id=$rep_id";
-   
+
     $res = sql_query($sql);
     if (! $res)
     {
@@ -178,7 +179,7 @@ if (isset($id))
 
     $row = sql_row_keyed($res, 0);
     sql_free($res);
-   
+
     $rep_type = $row['rep_type'];
 
     // If it's a repeating entry get the repeat details
@@ -191,7 +192,7 @@ if (isset($id))
         $start_month = (int)strftime('%m', $row['start_time']);
         $start_year  = (int)strftime('%Y', $row['start_time']);
       }
-      
+
       $rep_end_day   = (int)strftime('%d', $row['end_date']);
       $rep_end_month = (int)strftime('%m', $row['end_date']);
       $rep_end_year  = (int)strftime('%Y', $row['end_date']);
@@ -203,7 +204,7 @@ if (isset($id))
       {
         case 2:
         case 6:
-          
+
           $rep_day[0] = $row['rep_opt'][0] != "0";
           $rep_day[1] = $row['rep_opt'][1] != "0";
           $rep_day[2] = $row['rep_opt'][2] != "0";
@@ -317,7 +318,7 @@ function validate(form)
   {
     alert("<?php echo get_vocab("you_have_not_entered");  ?> CECO");
     return false;
-  }  
+  }
 
 
   // null strings and spaces only strings not allowed
@@ -355,14 +356,14 @@ function validate(form)
   }
   if ((!i1 || (i1 && i2)) &&
       form.rep_type &&
-      (form.rep_type.value != <?php echo REP_NONE ?>) && 
-      form.rep_type[<?php echo REP_N_WEEKLY ?>].checked && 
+      (form.rep_type.value != <?php echo REP_NONE ?>) &&
+      form.rep_type[<?php echo REP_N_WEEKLY ?>].checked &&
       (!n || n < 2))
   {
     alert("<?php echo get_vocab("you_have_not_entered") . '\n' . get_vocab("useful_n-weekly_value") ?>");
     return false;
   }
-  
+
 
   // check that a room(s) has been selected
   // this is needed as edit_entry_handler does not check that a room(s)
@@ -400,7 +401,7 @@ function OnAllDayClick(allday)
   {
     // save the old values, disable the inputs and, to avoid user confusion,
     // show the start time as the beginning of the day and the duration as one day
-    <?php 
+    <?php
     if ($enable_periods )
     {
       ?>
@@ -410,7 +411,7 @@ function OnAllDayClick(allday)
       <?php
     }
     else
-    { 
+    {
       ?>
       old_hour = form.hour.value;
       form.hour.value = '<?php echo $morningstarts; ?>';
@@ -418,20 +419,20 @@ function OnAllDayClick(allday)
       form.minute.value = '<?php printf("%02d", $morningstarts_minutes); ?>';
       form.hour.disabled = true;
       form.minute.disabled = true;
-      <?php 
-    } 
+      <?php
+    }
     ?>
-    
+
     old_duration = form.duration.value;
-    form.duration.value = '1';  
+    form.duration.value = '1';
     old_dur_units = form.dur_units.selectedIndex;
-    form.dur_units.value = 'days';  
+    form.dur_units.value = 'days';
     form.duration.disabled = true;
     form.dur_units.disabled = true;
   }
   else  // restore the old values and re-enable the inputs
   {
-    <?php 
+    <?php
     if ($enable_periods)
     {
       ?>
@@ -440,17 +441,17 @@ function OnAllDayClick(allday)
       <?php
     }
     else
-    { 
+    {
       ?>
       form.hour.value = old_hour;
       form.minute.value = old_minute;
       form.hour.disabled = false;
       form.minute.disabled = false;
-      <?php 
-    } 
+      <?php
+    }
     ?>
     form.duration.value = old_duration;
-    form.dur_units.selectedIndex = old_dur_units;  
+    form.dur_units.selectedIndex = old_dur_units;
     form.duration.disabled = false;
     form.dur_units.disabled = false;
   }
@@ -506,36 +507,26 @@ else
     <div id="div_description">
       <label for="description"><?php echo get_vocab("fulldescription")?></label>
       <!-- textarea rows and cols are overridden by CSS height and width -->
-      <textarea id="description" name="description" rows="8" cols="40">
-<?php 
-if ( $name == "") { 
-if ( $area == 26 ) {echo 'Cantidad de pax: 
-Interno: 
-Centro de costos:
-Menu: 
-'; }
-else {echo 'Detalle:
-Responsable:
-Interno: 
-Director-Profesor: ';}
-if ( $area == 28 or $area == 24 or $area == 25 ) {
-	echo '
-RESERVA DE CATERING
-Cantidad Personas:
-Servicio contratado:
-Detalle del servicio:
-Lugar donde servir:
-';
-}
-} 
-
-?>
+      <textarea id="description" name="description" rows="8" cols="40"><?php
+if ( $name == "") {
+  if ( $area == 26 ) {
+    ?>Cantidad de pax:&#13;Interno:&#13;Centro de costos:&#13;Menu:<?php
+    } else {
+      ?>Detalle:&#13;Responsable:&#13;Interno:&#13;Director-Profesor: <?php
+    }
+  //Pedido de Rosario
+  if ( $area == 28 or $area == 24 or $area == 25 ) { ?>&#13;RESERVA DE CATERING&#13;Cantidad Personas:&#13;Servicio contratado:&#13;Detalle del servicio:&#13;Lugar donde servir:<?php }
+}?>
 
 <?php echo htmlspecialchars ( $description ); ?></textarea>
     </div>
+    <div>
+    <label>Cantidad Alumnos: </label>
+    <input type='number' name='capacity' id='capacity' value='<?php echo $capacity; ?>' min='1' max='235'>
+    </div>
     <?php if (in_array($area, $array_areas_ceco)) : ?>
     <div id="div_date">
-      <label>CECO:</label>
+    <label>CECO:</label>
       <input type="text" name="ceco" id="ceco" value="<?php echo $ceco_row; ?>" maxlength="20">
     </div>
   <?php endif; ?>
@@ -544,9 +535,9 @@ Lugar donde servir:
       <?php gendateselector("", $start_day, $start_month, $start_year) ?>
     </div>
 
-    <?php 
-    if(! $enable_periods ) 
-    { 
+    <?php
+    if(! $enable_periods )
+    {
       echo "<div class=\"div_time\">\n";
       echo "<label>" . get_vocab("time") . ":</label>\n";
       echo "<input type=\"text\" class=\"time_hour\" name=\"hour\" value=\"";
@@ -557,7 +548,7 @@ Lugar donde servir:
       elseif ($start_hour > 12)
       {
         echo ($start_hour - 12);
-      } 
+      }
       elseif ($start_hour == 0)
       {
         echo "12";
@@ -565,7 +556,7 @@ Lugar donde servir:
       else
       {
         echo $start_hour;
-      } 
+      }
       echo "\" maxlength=\"2\">\n";
       echo "<span>:</span>\n";
       echo "<input type=\"text\" class=\"time_minute\" name=\"minute\" value=\"" . $start_min . "\" maxlength=\"2\">\n";
@@ -580,7 +571,7 @@ Lugar donde servir:
       }
       echo "</div>\n";
     }
-    
+
     else
     {
       ?>
@@ -636,7 +627,7 @@ Lugar donde servir:
         </div>
       </div>
     </div>
-    
+
     <div id="div_areas">
     </div>
 
@@ -651,12 +642,12 @@ Lugar donde servir:
     // to choose areas.
     if( $num_areas > 1 )
     {
-    
+
     ?>
-    
+
       <script type="text/javascript">
       //<![CDATA[
-      
+
       function changeRooms( formObj )
       {
         areasObj = eval( "formObj.area" );
@@ -740,9 +731,9 @@ Lugar donde servir:
 		  {?>
 					  option.value = <?php echo $row['id'] ?>;
 					  option_text = document.createTextNode('<?php echo $row['area_name'] ?>');
-					  
+
 					  <?php
-					  
+
 					  if ($row['id'] == $area_id)
 					  {
 						?>
@@ -760,9 +751,9 @@ Lugar donde servir:
 					{?>
 					option.value = <?php echo $row['id'] ?>;
 					option_text = document.createTextNode('<?php echo $row['area_name'] ?>');
-				  
+
 				  <?php
-				  
+
 				  if ($row['id'] == $area_id)
 				  {
 					?>
@@ -772,7 +763,7 @@ Lugar donde servir:
 				  ?>
 				  option.appendChild(option_text);
 				  area_select.appendChild(option);
-					
+
 					<?php
 					}
 		  }
@@ -781,21 +772,21 @@ Lugar donde servir:
       ?>
       // insert the <select> which we've just assembled into the <div>
       div_areas.appendChild(area_select);
-      
+
       //]]>
       </script>
-      
-      
+
+
       <?php
     } // if $num_areas
     ?>
-    
-    
+
+
     <div id="div_rooms">
     <label for="rooms"><?php echo get_vocab("rooms") ?>:</label>
     <div class="group">
       <select id="rooms" name="rooms[]" multiple="multiple" size="5">
-        <?php 
+        <?php
         // select the rooms in the area determined above
         $sql = "select id, room_name from $tbl_room where area_id=$area_id order by sort_key";
         $res = sql_query($sql);
@@ -820,34 +811,34 @@ Lugar donde servir:
     </div>
     <div id="div_type">
       <label for="type"><?php echo get_vocab("type")?>:</label>
-     <div class="group">    
+     <div class="group">
       <select id="type" name="type">
         <?php
         for ($c = "A"; $c <= "Z"; $c++)
         {
           if (!empty($typel[$c]))
-          { 
+          {
             echo "        <option value=\"$c\"" . ($type == $c ? " selected=\"selected\"" : "") . ">$typel[$c]</option>\n";
           }
         }
         ?>
       </select>
-      <?php 
-      if ($private_enabled) 
+      <?php
+      if ($private_enabled)
       { ?>
         <div id="div_private">
-          <input id="private" class="checkbox" name="private" type="checkbox" value="yes"<?php 
-          if($private) 
+          <input id="private" class="checkbox" name="private" type="checkbox" value="yes"<?php
+          if($private)
           {
             echo " checked=\"checked\"";
           }
-          if($private_mandatory) 
+          if($private_mandatory)
           {
             echo " disabled=\"true\"";
           }
           ?>>
           <label for="private"><?php echo get_vocab("private") ?></label>
-        </div><?php 
+        </div><?php
       } ?>
      </div>
     </div>
@@ -882,7 +873,7 @@ Lugar donde servir:
         <label><?php echo get_vocab("rep_end_date")?>:</label>
         <?php genDateSelector("rep_end_", $rep_end_day, $rep_end_month, $rep_end_year) ?>
       </div>
-      
+
       <div id="rep_day">
         <label><?php echo get_vocab("rep_rep_day")?>:<br><?php echo get_vocab("rep_for_weekly")?></label>
         <div class="group">
@@ -956,11 +947,11 @@ Lugar donde servir:
       }
       echo "</fieldset>\n";
     }
-    
+
     ?>
 
 
-    <?php 
+    <?php
 
     /*if ($token=='editentry') : ?>
     <fieldset>
@@ -968,15 +959,15 @@ Lugar donde servir:
     <input type="radio" name="cancelar" value="1" <?php echo $CANCELADO==1?'checked="checked"':'';?> style="width:20px;float:none;display:initial;" />SI
     <input type="radio" name="cancelar" value="0" <?php echo $CANCELADO==0?'checked="checked"':'';?> style="width:20px;float:none;display:initial;" />NO
     </fieldset>
-    <?php endif; 
+    <?php endif;
 
     */ ?>
-    
+
     <input type="hidden" name="returl" value="<?php echo htmlspecialchars($returl) ?>">
     <input type="hidden" name="create_by" value="<?php echo $create_by?>">
     <input type="hidden" name="rep_id" value="<?php echo $rep_id?>">
     <input type="hidden" name="edit_type" value="<?php echo $edit_type?>">
-    <?php 
+    <?php
     if(isset($id) && !isset($copy))
     {
       echo "<input type=\"hidden\" name=\"id\" value=\"$id\">\n";
@@ -994,12 +985,12 @@ Lugar donde servir:
 echo '</br>';
 echo "<font color='#990000'>Las cancelaciones de reservas de aulas deben ser notificadas con 72 hs de antelación.<br></font>";
 echo "<font color='#990000'>Caso contrario, la reserva se facturara.<br></font>";
-if ($area == "14"){
-	print('<a onclick="window.open(this.href); return false;" href="./pisos2.png">Bs As - Nueva Sede<br></a>');
-}
-if ($area == "26"){
-	print('<a onclick="window.open(this.href); return false;" href=./menualtocatering.html target=”_blank">Menu de Alto Catering<br></a>');
-	print('<a onclick="window.open(this.href); return false;" href=./centrodecostos.html target=”_blank”>Centro de Costos</a>');
-}
+// if ($area == "14"){
+// 	print('<a onclick="window.open(this.href); return false;" href="./pisos2.png">Bs As - Nueva Sede<br></a>');
+// }
+// if ($area == "26"){
+// 	print('<a onclick="window.open(this.href); return false;" href=./menualtocatering.html target=”_blank">Menu de Alto Catering<br></a>');
+// 	print('<a onclick="window.open(this.href); return false;" href=./centrodecostos.html target=”_blank”>Centro de Costos</a>');
+// }
 ?>
 <?php require_once "trailer.inc" ?>

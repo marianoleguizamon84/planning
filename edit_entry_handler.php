@@ -36,11 +36,12 @@ $rep_day = get_form_var('rep_day', 'array'); // array of bools
 $rep_num_weeks = get_form_var('rep_num_weeks', 'int');
 $private = get_form_var('private', 'string'); // bool, actually
 $ceco = get_form_var('ceco', 'string');
+$capacity = get_form_var('capacity', 'int');
 
 
 // Truncate the name field to the maximum length as a precaution.
 // Although the MAXLENGTH attribute is used in the <input> tag, this can
-// sometimes be ignored by the browser, for example by Firefox when 
+// sometimes be ignored by the browser, for example by Firefox when
 // autocompletion is used.  The user could also edit the HTML and remove
 // the MAXLENGTH attribute.    Passing an oversize string to some
 // databases (eg some versions of PostgreSQL) results in an SQL error,
@@ -63,15 +64,15 @@ if (empty($area))
 get_area_settings($area);
 
 
-// When $all_day is set, the hour and minute (or $period) fields are set to disabled, which means 
-// that they are not passed through by the form.   We need to set them because they are needed below  
+// When $all_day is set, the hour and minute (or $period) fields are set to disabled, which means
+// that they are not passed through by the form.   We need to set them because they are needed below
 // in various places. (We could change the JavaScript in edit_entry.php to set the fields to readonly
 // instead of disabled, but browsers do not generally grey out readonly fields and this would mean
-// that it's not so obvious to the user what is happening.   Also doing it here is safer, in case 
+// that it's not so obvious to the user what is happening.   Also doing it here is safer, in case
 // JavaScript is disabled and for some strange reason the user changes the values in the form to be
 // before start of day)
 if (isset($all_day) && ($all_day == "yes"))
-{ 
+{
   if ($enable_periods)
   {
     $period = 0;
@@ -83,7 +84,7 @@ if (isset($all_day) && ($all_day == "yes"))
   }
 }
 
-// If we dont know the right date then make it up 
+// If we dont know the right date then make it up
 if (!isset($day) or !isset($month) or !isset($year))
 {
   $day   = date("d");
@@ -92,7 +93,7 @@ if (!isset($day) or !isset($month) or !isset($year))
 }
 
 // Set up the return URL.    As the user has tried to book a particular room and a particular
-// day, we must consider these to be the new "sticky room" and "sticky day", so modify the 
+// day, we must consider these to be the new "sticky room" and "sticky day", so modify the
 // return URL accordingly.
 
 // First get the return URL basename, having stripped off the old query string
@@ -130,7 +131,7 @@ $returl .= "?year=$year&month=$month&day=$day";
 if (!in_array($room, $rooms))
 {
   $room = $rooms[0];
-} 
+}
 // Find the corresponding area
 $area = mrbsGetRoomArea($room);
 // Complete the query string
@@ -138,7 +139,7 @@ $returl .= "&area=$area&room=$room";
 
 // Handle private booking
 // Enforce config file settings if needed
-if ($private_mandatory) 
+if ($private_mandatory)
 {
   $isprivate = $private_default;
 }
@@ -157,7 +158,7 @@ $is_admin = (authGetUserLevel($user) >= 2);
 
 // Check to see whether this is a repeat booking and if so, whether the user
 // is allowed to make/edit repeat bookings.   (The edit_entry form should
-// prevent you ever getting here, but this check is here as a safeguard in 
+// prevent you ever getting here, but this check is here as a safeguard in
 // case someone has spoofed the HTML)
 if (isset($rep_type) && ($rep_type != REP_NONE) &&
     !$is_admin &&
@@ -187,7 +188,7 @@ else
     // $rooms[0] should always be set, because you can only get here
     // from edit_entry.php, where it will be set.   If it's not set
     // then something's gone wrong - probably somebody trying to call
-    // edit_entry_handler.php directly from the browser - so get out 
+    // edit_entry_handler.php directly from the browser - so get out
     // of here and go somewhere safe.
     header("Location: index.php");
     exit;
@@ -211,7 +212,7 @@ if ($name == '')
 <?php
   // Print footer and exit
   print_footer(TRUE);
-}       
+}
 
 
 if (($rep_type == REP_N_WEEKLY) && ($rep_num_weeks < 2))
@@ -258,7 +259,7 @@ if (isset($all_day) && ($all_day == "yes"))
                         $month, $day, $year,
                         is_dst($month, $day, $year, $eveningends));
     $endtime += $resolution;                // add on the duration (in seconds) of the last slot as
-                                            // $eveningends and $eveningends_minutes specify the 
+                                            // $eveningends and $eveningends_minutes specify the
                                             // beginning of the last slot
     // We need to set the duration and units because they are needed for email notifications
     $duration = $endtime - $starttime;
@@ -292,19 +293,19 @@ else
                       $month, $day, $year,
                       is_dst($month, $day, $year, $hour)) + $dur_seconds;
 
-  // Round down the starttime and round up the endtime to the nearest slot boundaries                   
+  // Round down the starttime and round up the endtime to the nearest slot boundaries
   $am7=mktime($morningstarts,$morningstarts_minutes,0,
               $month,$day,$year,is_dst($month,$day,$year,$morningstarts));
   $starttime = round_t_down($starttime, $resolution, $am7);
   $endtime = round_t_up($endtime, $resolution, $am7);
-  
+
   // If they asked for 0 minutes, and even after the rounding the slot length is still
   // 0 minutes, push that up to 1 resolution unit.
   if ($endtime == $starttime)
   {
     $endtime += $resolution;
   }
- 
+
   // Adjust the endtime for DST
   $endtime += cross_dst( $starttime, $endtime );
 }
@@ -384,7 +385,7 @@ if (!sql_mutex_lock("$tbl_entry"))
 $valid_booking = TRUE;
 $conflicts = "";          // Holds a list of all the conflicts (ideally this would be an array)
 $rules_broken = array();  // Holds an array of the rules that have been broken
- 
+
 // Check for any schedule conflicts in each room we're going to try and
 // book in;  also check that the booking conforms to the policy
 foreach ( $rooms as $room_id )
@@ -471,7 +472,7 @@ if ($valid_booking)
     {
       $status = STATUS_CONFIRMED;
     }
-    
+
     if ($edit_type == "series")
     {
 
@@ -488,7 +489,8 @@ if ($valid_booking)
                                            isset($rep_num_weeks) ? $rep_num_weeks : 0,
                                            $isprivate,
                                            $status,
-                                           $ceco);
+                                           $ceco,
+                                           $capacity);
       $new_id = $booking['id'];
 
       // Send a mail to the Administrator
@@ -540,7 +542,7 @@ if ($valid_booking)
       {
         $entry_type = 0;
       }
-      
+
       // Create the entry:
       $new_id = mrbsCreateSingleEntry($starttime,
                                       $endtime,
@@ -553,7 +555,8 @@ if ($valid_booking)
                                       $description,
                                       $isprivate,
                                       $status,
-                                      $ceco
+                                      $ceco,
+                                      $capacity
                                       );
 
       // Send a mail to the Administrator
@@ -599,7 +602,7 @@ if ($valid_booking)
   }
 
   sql_mutex_unlock("$tbl_entry");
-    
+
   // Now it's all done go back to the previous view
   header("Location: $returl");
   exit;
@@ -611,7 +614,7 @@ sql_mutex_unlock("$tbl_entry");
 if (!$valid_booking)
 {
   print_header($day, $month, $year, $area, isset($room) ? $room : "");
-    
+
   echo "<h2>" . get_vocab("sched_conflict") . "</h2>\n";
   if (!empty($rules_broken))
   {
