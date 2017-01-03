@@ -1,0 +1,19 @@
+{
+  "name": "schedules",
+  "version": "0.0.0",
+  "authors": [
+    "gutee <gutierrezmartin1992@gmail.com>"
+  ],
+  "license": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "ng-table": "~0.5.4",
+    "angular": "~1.4.2"
+  }
+}

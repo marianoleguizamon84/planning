@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Horarios</title>
+    <link rel="icon" type="image/png" href="assets/img/favicon.png"/>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="bower_components/ng-table/dist/ng-table.min.css"/>
+    <link rel="stylesheet" href="css/style-small.css"/>
+    <link rel="stylesheet" href="css/main.css"/>
+    <link rel="stylesheet" href="css/responsive.css"/>
+</head>
+<body ng-app="app">
+<header>
+    <!--<div id="velcro-header" style="height: 70px;">-->
+    <div class="navbar">
+        <div class="container-fluid">
+            <div class="header-wrapper">
+                <div class="pull-left">
+                    <a href="/">
+                        <span class="img-responsive logo" style="margin-top: 15px;"></span>
+                    </a>
+                </div>
+                <div class="pull-right menu schedule-header">
+                    <h2 class="title">Horarios</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div ng-controller="SchedulesTableController" class="table-wrapper">
+    <div class="table-responsive table-animation" ng-class="hideSchedules ? 'hide-schedules' : 'show-schedules'">
+        <table ng-table="tableParams" class="table " show-filter="true">
+            <tbody ng-repeat="group in $groups">
+            <tr class="ng-table-group">
+                <td colspan="{{$columns.length}}">
+                    <a href="" ng-click="group.$hideRows = !group.$hideRows">
+                        <span class="glyphicon"
+                              ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
+                        <strong>{{ group.value }}</strong>
+                    </a>
+                </td>
+            </tr>
+            <tr ng-hide="group.$hideRows" ng-repeat="subject in group.data" ng-class="subject.academicUnit">
+                <td sortable="'subject'" data-title="'Actividad'" filter="{'subject': 'text'}">
+                    {{subject.subject}}
+                </td>
+                <td sortable="'classroom'" data-title="'Aula'" filter="{'classroom': 'text'}">
+                    {{subject.classroom}}
+                </td>
+                <td sortable="'startTime'" data-title="'Inicio'" filter="{'startTime': 'text'}">
+                    {{subject.startTime}}
+                </td>
+                <td sortable="'endTime'" data-title="'Fin'" filter="{'endTime': 'text'}">
+                    {{subject.endTime}}
+                </td>
+                <td sortable="'academicUnit'" data-title="'Unidad'" filter="{'academicUnit': 'text'}">
+                    {{subject.academicUnit}}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="p-footer">
+    <div class="row foot">
+        <div class="pad-left">
+            <div class="footer-container">
+                <div class="pull-left">
+                    Powered by <a class="brand" href="http://www.sirius.com.ar" target="_blank"><img src="assets/img/sirius-logo.svg"><img src="assets/img/sirius.svg"></a>
+                </div>
+                <div class="pull-right">
+                    <a href="index-big.html">TV app</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="bower_components/angular/angular.min.js"></script>
+<script src="bower_components/angular-animate/angular-animate.min.js"></script>
+<script src="bower_components/ng-table/dist/ng-table.min.js"></script>
+<script src="js/jquery.js"></script>
+<script src="js/app.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

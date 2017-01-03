@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Horarios</title>
+    <link rel="icon" type="image/png" href="assets/img/favicon.png"/>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="bower_components/ng-table/dist/ng-table.min.css"/>
+    <link rel="stylesheet" href="css/style-big.css"/>
+    <link rel="stylesheet" href="css/main.css"/>
+    <link rel="stylesheet" href="css/responsive.css"/>
+</head>
+<body ng-app="app">
+<header>
+    <!--<div id="velcro-header" style="height: 70px;">-->
+    <div class="navbar">
+        <div class="container-fluid">
+            <div class="header-wrapper">
+                <div class="pull-left">
+                    <a href="/">
+                        <span class="img-responsive logo" style="margin-top: 15px;"></span>
+                    </a>
+                </div>
+                <div class="pull-right menu schedule-header">
+                    <h2 class="title"><span id="day"></span></h2>
+                </div>
+                <div class="" id="weather"></div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div ng-controller="SchedulesBigTableController" class="table-wrapper">
+    <div class="table-responsive table-animation" ng-class="hideSchedules ? 'hide-schedules' : 'show-schedules'">
+        <table ng-table="tableParams" class="table">
+            <tbody ng-repeat="group in $groups">
+            <tr class="ng-table-group">
+                <td colspan="{{$columns.length}}">
+                    <a href="" ng-click="group.$hideRows = !group.$hideRows">
+                        <span class="glyphicon"
+                              ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
+                        <strong>{{ group.value }}</strong>
+                    </a>
+                </td>
+            </tr>
+            <tr ng-hide="group.$hideRows" ng-repeat="subject in group.data" ng-class="subject.academicUnit">
+                <td sortable="'subject'" data-title="'Actividad'">
+                    {{subject.subject}}
+                </td>
+                <td sortable="'classroom'" data-title="'Aula'">
+                    {{subject.classroom}}
+                </td>
+                <td sortable="'startTime'" data-title="'Inicio'">
+                    {{subject.startTime}}
+                </td>
+                <td sortable="'endTime'" data-title="'Fin'">
+                    {{subject.endTime}}
+                </td>
+                <td sortable="'academicUnit'" data-title="'Unidad'">
+                    {{subject.academicUnit}}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="row foot">
+        <div class="col-lg-6 col-sm-6 col3-box">
+            <div class="container">
+                <div class="pull-left">
+                    Powered by <a class="brand" href="http://www.sirius.com.ar" target="_blank"><img src="assets/img/sirius-logo.svg"><img src="assets/img/sirius.svg"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="js/jquery.min.js"></script>
+<script src="js/jquery.simpleWeather.min.js"></script>
+<script src="bower_components/angular/angular.min.js"></script>
+<script src="bower_components/angular-animate/angular-animate.min.js"></script>
+<script src="bower_components/ng-table/dist/ng-table.min.js"></script>
+<script src="js/app-big.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
