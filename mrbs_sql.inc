@@ -300,7 +300,7 @@ function mrbsDelEntry($user, $id, $series, $all, $force = NULL)
  */
 function mrbsCreateSingleEntry($starttime, $endtime, $entry_type, $repeat_id,
                                $room_id, $owner, $name, $type, $description,
-                               $private, $status, $ceco = "", $capacity)
+                               $private, $status, $ceco = "", $cant_alum)
 {
   global $tbl_entry;
 
@@ -317,9 +317,9 @@ function mrbsCreateSingleEntry($starttime, $endtime, $entry_type, $repeat_id,
   {
 
       $sql = "INSERT INTO $tbl_entry (  start_time,   end_time,   entry_type,    repeat_id,   room_id,
-                                        create_by,    name,       type,          description, private, status, ceco, capacity)
+                                        create_by,    name,       type,          description, private, status, ceco, cant_alum)
                               VALUES ($starttime, $endtime, $entry_type, $repeat_id, $room_id,
-                                      '$owner',     '$name',    '$type',       '$description', $private, $status, '$ceco', $capacity)";
+                                      '$owner',     '$name',    '$type',       '$description', $private, $status, '$ceco', $cant_alum)";
 
 
     if (sql_command($sql) < 0)
@@ -619,7 +619,7 @@ function mrbsGetRepeatEntryList($time, $enddate, $rep_type, $rep_opt,
 function mrbsCreateRepeatingEntrys($starttime, $endtime, $rep_type,
                                    $rep_enddate, $rep_opt, $room_id, $owner,
                                    $name, $type, $description, $rep_num_weeks,
-                                   $private, $status, $ceco = "", $capacity)
+                                   $private, $status, $ceco = "", $cant_alum)
 {
   global $max_rep_entrys;
 
@@ -640,7 +640,7 @@ function mrbsCreateRepeatingEntrys($starttime, $endtime, $rep_type,
   {
     $id = mrbsCreateSingleEntry($starttime, $endtime, 0, 0,
                                 $room_id, $owner, $name, $type,
-                                $description, $private, $status, $ceco, $capacity);
+                                $description, $private, $status, $ceco, $cant_alum);
     $result['id'] = $id;
     $result['series'] = FALSE;
     return $result;
@@ -672,7 +672,7 @@ function mrbsCreateRepeatingEntrys($starttime, $endtime, $rep_type,
                                       $private,
                                       $status,
                                       $ceco,
-                                      $capacity
+                                      $cant_alum
                                     );
     }
   }
@@ -778,7 +778,7 @@ function mrbsGetBookingInfo($id, $series, $silent=FALSE)
             $tbl_repeat.end_date,
             $tbl_repeat.rep_opt,
             $tbl_repeat.rep_num_weeks,
-            $tbl_entry.capacity
+            $tbl_entry.cant_alum
 
      FROM  $tbl_repeat, $tbl_room, $tbl_area
      WHERE $tbl_repeat.room_id = $tbl_room.id
@@ -807,7 +807,7 @@ function mrbsGetBookingInfo($id, $series, $silent=FALSE)
             $tbl_entry.end_time,
             $tbl_entry.repeat_id,
             $tbl_entry.ceco,
-            $tbl_entry.capacity
+            $tbl_entry.cant_alum
 
      FROM  $tbl_entry, $tbl_room, $tbl_area
      WHERE $tbl_entry.room_id = $tbl_room.id

@@ -101,7 +101,7 @@ if ( $area == '21' and $permiso < '3'){
 if (isset($id))
 {
   $sql = "select name, create_by, description, start_time, end_time,
-     type, room_id, entry_type, repeat_id, private, ceco, capacity from $tbl_entry where id=$id";
+     type, room_id, entry_type, repeat_id, private, ceco, cant_alum from $tbl_entry where id=$id";
 
   $res = sql_query($sql);
   if (! $res)
@@ -141,7 +141,7 @@ if (isset($id))
   $rep_id      = $row['repeat_id'];
   $private     = $row['private'];
   $ceco_row    = $row['ceco'];
-  $capacity    = $row['capacity'];
+  $cant_alum   = $row['cant_alum'];
 
   if ($private_mandatory)
   {
@@ -520,9 +520,14 @@ if ( $name == "") {
 
 <?php echo htmlspecialchars ( $description ); ?></textarea>
     </div>
+    <?php
+    $db = new PDO('mysql:host=localhost;dbname=planningdb;charset=utf8mb4;port:3306', 'root', '');
+    $query = $db->query('SELECT id,capacity FROM `plan_room` WHERE id=' . $room_id);
+    $result = $query->fetchAll(PDO::FETCH_ASSOC);
+     ?>
     <div>
     <label>Cantidad Alumnos: </label>
-    <input type='number' name='capacity' id='capacity' value='<?php echo $capacity; ?>' min='1' max='235'>
+    <input type='number' name='cant_alum' id='cant_alum' value='<?php echo $cant_alum; ?>' min='1' max='<?php echo $result[0]['capacity'] ?>'>/<?php echo $result[0]['capacity'] ?>
     </div>
     <?php if (in_array($area, $array_areas_ceco)) : ?>
     <div id="div_date">
@@ -992,5 +997,6 @@ echo "<font color='#990000'>Caso contrario, la reserva se facturara.<br></font>"
 // 	print('<a onclick="window.open(this.href); return false;" href=./menualtocatering.html target=”_blank">Menu de Alto Catering<br></a>');
 // 	print('<a onclick="window.open(this.href); return false;" href=./centrodecostos.html target=”_blank”>Centro de Costos</a>');
 // }
+
 ?>
 <?php require_once "trailer.inc" ?>

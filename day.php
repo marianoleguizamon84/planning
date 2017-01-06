@@ -46,7 +46,7 @@ else
     {
       $day   = date("d");
       $month = date("m");
-      $year  = date("Y");   
+      $year  = date("Y");
       break;
     }
   }
@@ -98,7 +98,7 @@ $pm7=mktime($eveningends,$eveningends_minutes,0,
 ?>
 <div class="screenonly">
   <div id="dwm_header">
-      
+
 <?php
 
 $sql = "select id, area_name from $tbl_area order by area_name";
@@ -109,7 +109,7 @@ if ($res && (sql_count($res)>1))
 {
   echo "<div id=\"dwm_areas\">\n";
   echo "<h3>".get_vocab("areas")."</h3>";
-  
+
   // need to show either a select box or a normal html list,
   // depending on the settings in config.inc.php
   if ($area_list_format == "select")
@@ -125,7 +125,7 @@ if ($res && (sql_count($res)>1))
       echo "<li><a href=\"day.php?year=$year&amp;month=$month&amp;day=$day&amp;area=".$row['id']."\">";
       echo "<span" . (($row['id'] == $area) ? ' class="current"' : '') . ">";
       echo htmlspecialchars($row['area_name']) . "</span></a></li>\n";
-    }  
+    }
     echo ("</ul>\n");
   }
   echo "</div>\n";
@@ -145,7 +145,7 @@ echo "</div>";
 // find the last non-hidden day
 $d = $day;
 do
-{  
+{
   $d--;
   $i= mktime(12,0,0,$month,$d,$year);
 }
@@ -168,7 +168,7 @@ $td = date("d",$i);
 
 
 //We want to build an array containing all the data we want to show
-//and then spit it out. 
+//and then spit it out.
 
 //Get all appointments for today in the area that we care about
 //Note: The predicate clause 'start_time <= ...' is an equivalent but simpler
@@ -182,7 +182,7 @@ $sql = "SELECT $tbl_room.id AS room_id, start_time, end_time, name, $tbl_entry.i
    AND area_id = $area
    AND start_time <= $pm7 AND end_time > $am7
    ORDER BY start_time";   // necessary so that multiple bookings appear in the right order
-   
+
 $res = sql_query($sql);
 if (! $res)
 {
@@ -204,12 +204,12 @@ for ($i = 0; ($row = sql_row_keyed($res, $i)); $i++)
   //  row['entry_private'] = if entry is private
   //  row['entry_create_by'] = Creator/owner of entry
   //  row['status'] = Status code of the entry
-  
+
   map_add_booking($row, $today[$row['room_id']][$day], $am7, $pm7, $format);
 
 }
 
-if ($debug_flag) 
+if ($debug_flag)
 {
   echo "<p>DEBUG:<pre>\n";
   echo "\$dst_change = $dst_change\n";
@@ -302,12 +302,12 @@ else
   // START DISPLAYING THE MAIN TABLE
   echo "<table class=\"dwm_main\" id=\"day_main\">\n";
   ( $dst_change != -1 ) ? $j = 1 : $j = 0;
-  
+
   // TABLE HEADER
   echo "<thead>\n";
   $header = "<tr>\n";
-  
-  
+
+
   // We can display the table in two ways
   if ($times_along_top)
   {
@@ -345,12 +345,12 @@ else
       $header .= "<th class=\"first_last\">" . get_vocab("room") . ":</th>";
     }
   } // end "times_along_top" view (for the header)
-  
+
   else
   {
     // the standard view, with rooms along the top and times down the side
     $header .= "<th class=\"first_last\">" . ($enable_periods ? get_vocab("period") : get_vocab("time")) . ":</th>";
-  
+
     $column_width = (int)(95 / sql_count($res));
     for ($i = 0; ($row = sql_row_keyed($res, $i)); $i++)
     {
@@ -360,18 +360,18 @@ else
                   htmlspecialchars($row['room_name']) . ($row['capacity'] > 0 ? "(".$row['capacity'].")" : "") . "</a></th>";
       $rooms[] = $row['id'];
     }
-  
+
     // next line to display times on right side
     if ( FALSE != $row_labels_both_sides )
     {
       $header .= "<th class=\"first_last\">" . ( $enable_periods  ? get_vocab("period") : get_vocab("time") ) . ":</th>";
     }
   }  // end standard view (for the header)
-  
+
   $header .= "</tr>\n";
   echo $header;
   echo "</thead>\n";
-  
+
   // Now repeat the header in a footer if required
   if ($column_labels_both_ends)
   {
@@ -379,26 +379,26 @@ else
     echo $header;
     echo "</tfoot>\n";
   }
-  
-  
+
+
   // TABLE BODY LISTING BOOKINGS
   echo "<tbody>\n";
-  
+
   // This is the main bit of the display
   // We loop through time and then the rooms we just got
 
   // if the today is a day which includes a DST change then use
   // the day after to generate timesteps through the day as this
   // will ensure a constant time step
-  
+
   // URL for highlighting a time. Don't use REQUEST_URI or you will get
   // the timetohighlight parameter duplicated each time you click.
   $hilite_url="day.php?year=$year&amp;month=$month&amp;day=$day&amp;area=$area$room_param&amp;timetohighlight";
-  
-  
-   
+
+
+
   $row_class = "even_row";
-  
+
   // We can display the table in two ways
   if ($times_along_top)
   {
@@ -406,7 +406,7 @@ else
     for ($i = 0; ($row = sql_row_keyed($res, $i)); $i++, $row_class = ($row_class == "even_row")?"odd_row":"even_row")
     {
       echo "<tr>\n";
-      $room_id = $row['id']; 
+      $room_id = $row['id'];
       $room_cell_link = "week.php?year=$year&amp;month=$month&amp;day=$day&amp;area=$area&amp;room=$room_id";
       draw_room_cell($row, $room_cell_link);
       for (
@@ -419,11 +419,11 @@ else
         $time_t = date($format, $t);
         // and get a stripped version of the time for use with periods
         $time_t_stripped = preg_replace( "/^0/", "", $time_t );
-        
+
         // calculate hour and minute (needed for links)
         $hour = date("H",$t);
         $minute = date("i",$t);
-        
+
         // set up the query strings to be used for the link in the cell
         $query_strings = array();
         $query_strings['new_periods'] = "area=$area&amp;room=$room_id&amp;period=$time_t_stripped&amp;year=$year&amp;month=$month&amp;day=$day";
@@ -433,7 +433,7 @@ else
         if (!isset($today[$room_id][$day][$time_t]))
         {
           $today[$room_id][$day][$time_t] = array();  // to avoid an undefined index NOTICE error
-        }   
+        }
         $cell_class = $row_class;
         draw_cell($today[$room_id][$day][$time_t], $query_strings, $cell_class);
       }  // end for (looping through the times)
@@ -444,7 +444,7 @@ else
       echo "</tr>\n";
     }  // end for (looping through the rooms)
   }  // end "times_along_top" view (for the body)
-  
+
   else
   {
     // the standard view, with rooms along the top and times down the side
@@ -458,15 +458,15 @@ else
       $time_t = date($format, $t);
       // and get a stripped version of the time for use with periods
       $time_t_stripped = preg_replace( "/^0/", "", $time_t );
-      
+
       // calculate hour and minute (needed for links)
       $hour = date("H",$t);
       $minute = date("i",$t);
-  
+
       // Show the time linked to the URL for highlighting that time
       echo "<tr>";
       draw_time_cell($t, $time_t, $time_t_stripped, $hilite_url);
-  
+
       // Loop through the list of rooms we have for this area
       while (list($key, $room_id) = each($rooms))
       {
@@ -490,18 +490,18 @@ else
         }
         draw_cell($today[$room_id][$day][$time_t], $query_strings, $cell_class);
       }
-      
+
       // next lines to display times on right side
       if ( FALSE != $row_labels_both_sides )
       {
         draw_time_cell($t, $time_t, $time_t_stripped, $hilite_url);
       }
-  
+
       echo "</tr>\n";
       reset($rooms);
     }
   }  // end standard view (for the body)
-  
+
   echo "</tbody>\n";
   echo "</table>\n";
 

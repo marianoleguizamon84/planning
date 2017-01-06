@@ -104,7 +104,7 @@ $series = get_form_var('series', 'int');
 $action = get_form_var('action', 'string');
 $returl = get_form_var('returl', 'string');
 $error = get_form_var('error', 'string');
-$capacity = get_form_var('capacity', 'int');
+$cant_alum = get_form_var('cant_alum', 'int');
 
 
 // If we dont know the right date then make it up
@@ -170,7 +170,7 @@ $type          = $row['type'];
 $status        = $row['status'];
 $private       = $row['private'];
 $room_id       = $row['room_id'];
-$capacity      = $row['capacity'];
+$cant_alum      = $row['cant_alum'];
 
 $updated       = time_date_string($row['last_updated']);
 $last_reminded = (empty($row['reminded'])) ? $row['last_updated'] : $row['reminded'];
@@ -391,7 +391,7 @@ if ($provisional_enabled && ($status == STATUS_PROVISIONAL) && $puedeEditar)
   </tr>
   <tr>
     <td>Cantidad Alumnos:</td>
-    <td><?php echo $capacity ?></td>
+    <td><?php echo $cant_alum ?></td>
   </tr>
   <?php
   if ($provisional_enabled)

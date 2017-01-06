@@ -36,7 +36,7 @@ $rep_day = get_form_var('rep_day', 'array'); // array of bools
 $rep_num_weeks = get_form_var('rep_num_weeks', 'int');
 $private = get_form_var('private', 'string'); // bool, actually
 $ceco = get_form_var('ceco', 'string');
-$capacity = get_form_var('capacity', 'int');
+$cant_alum = get_form_var('cant_alum', 'int');
 
 
 // Truncate the name field to the maximum length as a precaution.
@@ -490,7 +490,7 @@ if ($valid_booking)
                                            $isprivate,
                                            $status,
                                            $ceco,
-                                           $capacity);
+                                           $cant_alum);
       $new_id = $booking['id'];
 
       // Send a mail to the Administrator
@@ -556,7 +556,7 @@ if ($valid_booking)
                                       $isprivate,
                                       $status,
                                       $ceco,
-                                      $capacity
+                                      $cant_alum
                                       );
 
       // Send a mail to the Administrator
