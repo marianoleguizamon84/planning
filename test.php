@@ -1,25 +1,38 @@
 <?php
 
-require_once "defaultincludes.inc";
+class Capacidad {
+  public $host;
+  public $database;
+  public $user;
+  public $pass;
 
-$db = new PDO('mysql:host=' . $db_host . ';dbname='. $db_database .';charset=utf8mb4;port:3306', $db_login, $dp_password);
+  public function __construct($db_host, $db_database, $db_login, $db_password){
+    $this->host = $db_host;
+    $this->database = $db_database;
+    $this->user = $db_login;
+    $this->pass = $db_password;
+  }
 
-$query = $db->query('SELECT * FROM plan_room');
+  function cargarArray() {
 
-$result = $query->fetchAll(PDO::FETCH_ASSOC);
+    $db = new PDO('mysql:host=' . $this->host . ';dbname='. $this->database .';charset=utf8mb4;port:3306', $this->user, $this->pass);
 
-foreach ($result as $key => $value) {
-  echo 'ID: ' . $value['id'] . ' - SALA: '. $value['room_name'] . ' - CAPACIDAD: ' . $value['capacity'] . '<br>';
+    $query = $db->query('SELECT * FROM plan_room');
+
+    $result = $query->fetchAll(PDO::FETCH_ASSOC);
+
+    return $result;
+  }
+
+  function getCapacidad($room, $miVector){
+    foreach ($miVector as $value) {
+      if ($room == $value['id'])
+        {
+          return $value['capacity'];
+        }
+      }
+      return -1;
+    }
 }
-
-// print_r($result);
-
-// echo 'hola';
-
-// $dbsys = "mysql";
-// $db_host = "localhost";
-// $db_database = "planningdb";
-// $db_login = "root";
-// $db_password = '';
 
  ?>

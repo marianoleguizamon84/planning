@@ -5,6 +5,8 @@ require_once "defaultincludes.inc";
 
 require_once "mrbs_sql.inc";
 
+require_once "test.php";
+
 global $twentyfourhour_format;
 
 /* areas disponibles para guardar CECO */
@@ -79,7 +81,7 @@ if ( $area == '21' and $permiso < '3'){
 	echo '<br>';
 	echo 'No tiene permisos para reservar esta aula<br>';
 
-	echo 'Por favor contactese con Alejandra López o Mariano Leguizamón para proceder a realizar reservas en los espacios exclusivos del CAI.<br>';
+	echo 'Por favor contactese con Eliana Robol para proceder a realizar reservas en los espacios exclusivos del CAI.<br>';
 	//echo '<a href="mailto:allopez@austral.edu.ar?cc=mleguizamon@austral.edu.ar&amp;subject=Reserva%20de%20Salon&amp;body=Motivo: '.$user.'%0D%0AFecha:%0D%0A">Enviar correo para reservar salon</a><br>';
 	echo "<a href='javascript:history.back()'>Volver</a>";
 	exit;
@@ -521,13 +523,40 @@ if ( $name == "") {
 <?php echo htmlspecialchars ( $description ); ?></textarea>
     </div>
     <?php
-    $db = new PDO('mysql:host=localhost;dbname=planningdb;charset=utf8mb4;port:3306', 'root', '');
-    $query = $db->query('SELECT id,capacity FROM `plan_room` WHERE id=' . $room_id);
-    $result = $query->fetchAll(PDO::FETCH_ASSOC);
+    $cap = new Capacidad($db_host, $db_database, $db_login, $db_password);
+    $salas = $cap->cargarArray();
      ?>
     <div>
+    <script type="text/javascript">
+    function getCapacidad(room, miVector){
+      for (var i = 0; i < miVector.length; i++) {
+        if (room == miVector[i].id)
+          {
+            return miVector[i].capacity;
+          }
+        }
+        return -1;
+    }
+    window.onload = function () {
+    document.getElementById("rooms").addEventListener("click", function(){
+      var valor = (document.getElementById('rooms').value);
+      var salas = <?php echo json_encode($salas); ?>;
+      var capacidad = getCapacidad(valor, salas);
+      document.getElementById('cant_max').innerHTML = "/" + capacidad;
+      document.getElementById('cant_alum').max = capacidad;
+      });
+    document.getElementById("area").addEventListener("click", function(){
+      var valor = (document.getElementById('rooms').value);
+      var salas = <?php echo json_encode($salas); ?>;
+      var capacidad = getCapacidad(valor, salas);
+      document.getElementById('cant_max').innerHTML = "/" + capacidad;
+      document.getElementById('cant_alum').max = capacidad;
+      });
+    }
+    </script>
+
     <label>Cantidad Alumnos: </label>
-    <input type='number' name='cant_alum' id='cant_alum' value='<?php echo $cant_alum; ?>' min='1' max='<?php echo $result[0]['capacity'] ?>'>/<?php echo $result[0]['capacity'] ?>
+    <input type='number' name='cant_alum' id='cant_alum' value='<?php echo $cant_alum; ?>' min='1' max='<?php echo $cap->getCapacidad($room_id, $salas) ?>'><span id="cant_max">/<?php echo $cap->getCapacidad($room_id, $salas) ?></span>
     </div>
     <?php if (in_array($area, $array_areas_ceco)) : ?>
     <div id="div_date">
