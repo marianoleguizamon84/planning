@@ -524,39 +524,34 @@ if ( $name == "") {
     </div>
     <?php
     $cap = new Capacidad($db_host, $db_database, $db_login, $db_password);
-    $salas = $cap->cargarArray();
+    // $salas = $cap->salas;
      ?>
     <div>
     <script type="text/javascript">
-    function getCapacidad(room, miVector){
-      for (var i = 0; i < miVector.length; i++) {
-        if (room == miVector[i].id)
+    function getCapacidad(room){
+      var salas = <?php echo json_encode($cap->salas); ?>;
+      for (var i = 0; i < salas.length; i++) {
+        if (room == salas[i].id)
           {
-            return miVector[i].capacity;
+            return salas[i].capacity;
           }
         }
         return -1;
-    }
+    };
+    function cambiarCapacidad(){
+      var valor = (document.getElementById('rooms').value);
+      var capacidad = getCapacidad(valor);
+      document.getElementById('cant_max').innerHTML = "/" + capacidad;
+      document.getElementById('cant_alum').max = capacidad;
+    };
     window.onload = function () {
-    document.getElementById("rooms").addEventListener("click", function(){
-      var valor = (document.getElementById('rooms').value);
-      var salas = <?php echo json_encode($salas); ?>;
-      var capacidad = getCapacidad(valor, salas);
-      document.getElementById('cant_max').innerHTML = "/" + capacidad;
-      document.getElementById('cant_alum').max = capacidad;
-      });
-    document.getElementById("area").addEventListener("click", function(){
-      var valor = (document.getElementById('rooms').value);
-      var salas = <?php echo json_encode($salas); ?>;
-      var capacidad = getCapacidad(valor, salas);
-      document.getElementById('cant_max').innerHTML = "/" + capacidad;
-      document.getElementById('cant_alum').max = capacidad;
-      });
-    }
+      document.getElementById("area").addEventListener("click", cambiarCapacidad);
+      document.getElementById("rooms").addEventListener("change", cambiarCapacidad);
+    };
     </script>
 
     <label>Cantidad Alumnos: </label>
-    <input type='number' name='cant_alum' id='cant_alum' value='<?php echo $cant_alum; ?>' min='1' max='<?php echo $cap->getCapacidad($room_id, $salas) ?>'><span id="cant_max">/<?php echo $cap->getCapacidad($room_id, $salas) ?></span>
+    <input type='number' name='cant_alum' id='cant_alum' value='<?php echo $cant_alum; ?>' min='1' max='<?php echo $cap->getCapacidad($room_id) ?>'><span id="cant_max">/<?php echo $cap->getCapacidad($room_id) ?></span>
     </div>
     <?php if (in_array($area, $array_areas_ceco)) : ?>
     <div id="div_date">
